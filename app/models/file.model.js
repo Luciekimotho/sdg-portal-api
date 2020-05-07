@@ -9,4 +9,8 @@ const FileSchema = new moongose.Schema({
     timestamps: true
 })
 
-module.exports = moongose.model('File', FileSchema)
+var File = module.exports = moongose.model('File', FileSchema)
+
+module.exports.get = function(callback, limit){
+    File.find(callback).limit(limit);
+}
