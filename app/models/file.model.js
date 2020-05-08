@@ -1,16 +1,15 @@
 const moongose = require('mongoose');
 
-
-const FileSchema = new moongose.Schema({
+const fileSchema = new moongose.Schema({
     title: String,
     description: String,
     data: Buffer
 },{
     timestamps: true
-})
+});
 
-var File = module.exports = moongose.model('File', FileSchema)
+var File = module.exports = moongose.model('file', fileSchema)
 
-module.exports.get = function(callback, limit){
+module.exports.get = function (callback, limit){
     File.find(callback).limit(limit);
 }
