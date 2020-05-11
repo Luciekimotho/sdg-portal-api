@@ -22,34 +22,24 @@ exports.findAll = function (req, res) {
 
 //Create and save new file
 exports.create = function(req, res) {
-    const form = formidable({ multiples: true });
+    const form = formidable.IncomingForm({ multiples: true });
     form.parse(req, (err, fields, files) => {
-        res.json({ fields, files })
+      //  res.json({ fields, files })
+
+        const file = new File({
+            title: fields.title,
+            description: fields.description,
+            data: files
+        });
+        console.log(file)
+    //Save file in database
+        file.save(function(err){
+            res.json({
+                data: file
+            })
+        })
+
     })
-
-
-    console.log(req.body)
-
-    // if(!req.body.title){
-    //     return res.status(400).send({
-    //         message: "Title cannot be empty"
-    //     });
-    // }
-
-    // //Create the file
-    // const file = new File({
-    //     title: req.body.title,
-    //     description: req.body.description,
-    //     data: req.body.data
-    // });
-
-    // //Save file in database
-    // file.save(function(err){
-    //     res.json({
-    //         message: "New file created",
-    //         data: file
-    //     })
-    // })
 }
 
 
