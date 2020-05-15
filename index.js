@@ -1,16 +1,15 @@
 let express = require("express");
-let bodyParser = require("body-parser");
 let moongose = require('mongoose');
-const formidable = require('formidable');
-
+let cors = require('cors');
 let app = express();
 
+const path = require("path");
+app.use(express.static(path.join(__dirname, "..", "build")));
+app.use(express.static("public"));
+
+app.use(cors());
+
 let apiRoutes = require('./app/routes/file.routes.js');
-
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({  extended: false }));
-
-//app.use(formidable)
 
 moongose.Promise = global.Promise;
 
@@ -23,12 +22,12 @@ if(!db){
     console.log("Connection successful")
 }
 
-app.get('/', (req, res) => {
-    res.send("Hello, and welcome!");
-   });
+// app.get('/', (req, res) => {
+//     res.send("Hello, and welcome!");
+//    });
 
 app.use('/api', apiRoutes);
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+app.listen(3001, () => {
+    console.log("Server running on port 3001");
    });

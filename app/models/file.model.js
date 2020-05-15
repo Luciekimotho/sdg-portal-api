@@ -3,7 +3,7 @@ const moongose = require('mongoose');
 const fileSchema = new moongose.Schema({
     title: String,
     description: String,
-    data: Object
+    data: Array
 },{
     timestamps: true
 });
