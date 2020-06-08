@@ -3,7 +3,13 @@ const moongose = require('mongoose');
 const fileSchema = new moongose.Schema({
     title: String,
     description: String,
-    data: Array
+    page: String,
+    year: Number,
+    data: Array,
+    user: String,
+    section: String,
+    yearFrom: Number,
+    yearTo:Number
 },{
     timestamps: true
 });

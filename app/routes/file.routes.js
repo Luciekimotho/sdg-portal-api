@@ -27,11 +27,25 @@ router.get('/', function(req, res){
     });
 });
 
+const auth = require('../../middleware');
+
 //Import controller
 const fileController = require('../controllers/file.controller.js');
+const userController = require('../controllers/user.controller.js');
+
 router.route('/files')
     .get(fileController.findAll)
-    .post(fileController.create);
+    .post(auth, fileController.create);
+
+router.route('/file/:id').get(fileController.findOne);
+router.route('/file/:id').delete(fileController.delete);
+
+router.route('/user/create').post(userController.create);
+router.route('/user/authenticate').post(userController.authenticate);
+
+router.route('/user/checkToken').get(auth, userController.withAuth);
+router.route('/user/logout').get(userController.logOut);
+router.route('/user/readCookie').get(userController.readCookie);
 
 
 module.exports = router;

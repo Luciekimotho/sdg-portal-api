@@ -6,23 +6,41 @@ const csv = require('csv-parser');
 //import File model
 const File = require('../models/file.model.js');
 
-// global.__basedir = __dirname
+//Create and save new file
+exports.create = function(req, res) {
+    const fileData = []
+    const form = formidable.IncomingForm({ 
+        multiples: true,
+        uploadDir: __dirname + '../../../public' 
+     });
+     
+    form.parse(req, (err, fields, files) => {
+            //Create new file record
+            const file = new File({
+                title: fields.title,
+                description: fields.description,
+                page: fields.page,
+                year: fields.year,
+                yearFrom: fields.yearFrom,
+                yearTo:fields.yearTo,
+                section: fields.section,
+                user:fields.user,
+                data: JSON.parse(fields.fileData)
+            });
 
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, __basedir + '/uploads')
-//     },
-
-//     filename: (req, file, cb) => {
-//         cb(null, file.fieldname + "-" + Date.now() + "-" + file.originalname)
-//     }
-// })
-
-// var upload = multer({ storage: storage })
+            //Save file record in database
+            file.save({ checkKeys: false }, function(err, record){
+                if (err) return console.error(err);
+                res.json({
+                    data: file
+                })
+            })
+    })
+}
 
 // Retrieve and return all files from the database.
 exports.findAll = function (req, res) {
-    console.log(res)
+  //  console.log(res)
     File.get(function(err, files){
         if(err){
             res.json({
@@ -39,47 +57,22 @@ exports.findAll = function (req, res) {
   };
 
 
-//Create and save new file
-exports.create = function(req, res) {
-    const fileData = []
-    const form = formidable.IncomingForm({ 
-        multiples: true,
-        uploadDir: __dirname + '../../../public' 
-     });
-     
-    form.parse(req, (err, fields, files) => {
-      fs.createReadStream(files.file.path)
-      .pipe(csv())
-      .on('data', (row) => {
-            fileData.push(row);
-            //console.log(fileData);
-            
-             //Create new file record
-            const file = new File({
-                title: fields.title,
-                description: fields.description,
-                data: files
-            });
-
-            //Save file record in database
-            file.save(function(err){
-                res.json({
-                    data: file
-                })
-            })
-      })
-      .on('end', () => {
-            //console.log('file read')
-      })
-
-     
-
-    })
-}
-
-
 // Find a single files with a fileId
 exports.findOne = (req, res) => {
+    const id = req.params.id;
+    File.findById(id)
+        .then(data => {
+            if(!data) {
+                res.status(404).send({message: "No file found with id", id})
+            }
+            else {
+                res.send(data)
+            }
+        })
+        .catch(err => {
+            res.status(500)
+                .send({message: "Error retrieving file with id", id})
+        })
 
 };
 
